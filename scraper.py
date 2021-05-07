@@ -2,13 +2,15 @@ import json
 import urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 import ssl
+import sqlite3
 # Ignore SSL certificate errors
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 #constant data
-
+conn = sqlite3.connect('bacondb.sqlite')
+cur = conn.cursor()
 
 def json_request(address):
     '''Returns a JSON object from the supplied URL'''
@@ -47,12 +49,12 @@ def get_actor_name(actor):
     name = result['name']
     return name
 
-def top_movies(n, actor):
-    '''Returns a list of the first n movie credits of an actor'''
+def get_movies(actor):
+    '''Returns a list of the movie credits of an actor, slice to truncate'''
     lst = []
     actor_id = get_actor_id(actor)
     movies = query_get('person', actor_id, 'movie_credits')
-    for i in range(n):
+    for i in range(len(movies['cast'])):
         lst.append(movies['cast'][i]['title'])
     return lst
 
@@ -69,11 +71,11 @@ def get_movie_credits(movie):
     cast_list = query_get('movie', id, 'credits')
     return cast_list
 
-def top_cast(n, movie):
-    '''Returns a list of the first n billed actors'''
+def get_cast(movie):
+    '''Returns a list of billed actors, slice to truncate'''
     lst = []
     cast = get_movie_credits(movie)
-    for person in cast['cast'][:n]:
+    for person in cast['cast']:
         lst.append(person['name'])
     return lst
 
@@ -82,3 +84,4 @@ while True:
     person = input("Enter a person's name: ")
     if len(person) == 0:
         break
+    print(get_cast(person)[:10])

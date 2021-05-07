@@ -14,12 +14,12 @@ def detect_bacon(lst):
 
 #constant data
 # a list of movies Kevin Bacon is in to start comparisons
-bacon_list = ['Apollo 13', 'Footloose', 'Top Gun']#fill this list!
+bacon_list = ['Apollo 13', 'Footloose']#fill this list!
 
 
 
 
-degree_zero = top_movies(10, person)
+degree_zero = get_movies(person)
 print(degree_zero)
 if detect_bacon(degree_zero) == True:
     print('Found some bacon!')
@@ -28,7 +28,7 @@ if detect_bacon(degree_zero) == True:
 #If nothing found compile list of top ten actors from top ten movies
 degree_one_actors = []
 for movie in degree_zero:
-    next_list = top_cast(10, movie)
+    next_list = get_cast(movie)
     for name in next_list:
         if name == db_name:
             continue
@@ -39,7 +39,7 @@ degree_one_movies = []
 
 for person in degree_one_actors:
     try:
-        for movie in top_movies(10, person):
+        for movie in get_movies(person):
             if movie in degree_one_movies:
                 continue
             elif movie in degree_zero:
