@@ -14,6 +14,7 @@ ctx.verify_mode = ssl.CERT_NONE
 conn = sqlite3.connect('bacon_DB.db')
 cur = conn.cursor()
 count = 0
+id = 1
 
 def json_request(address):
     '''Returns a JSON object from the supplied URL'''
@@ -38,32 +39,32 @@ def query_details(type, id):
     #print(address)
     return json_request(address)
 
-#actor methods
-def get_actor_id(actor):
-    '''Returns the actor's ID (passing in a name)'''
-    result = search_api('person', actor)
-    actor_id = result['results'][0]['id']
-    return actor_id
+#person methods
+def get_person_id(person):
+    '''Returns the person's ID (passing in a name)'''
+    result = search_api('person', person)
+    person_id = result['results'][0]['id']
+    return person_id
 
-def get_actor_name(actor):
-    '''Returns a string of the actor's name with correct casing'''
-    id = get_actor_id(actor)
+def get_person_name(person):
+    '''Returns a string of the person's name with correct casing'''
+    id = get_person_id(person)
     result = query_details('person', id)
     name = result['name']
     return name
 
-def get_actor_rating(actor):
-    '''Returns an actors popularity rating(passing in a name) '''
-    id = get_actor_id(actor)
+def get_person_rating(person):
+    '''Returns an persons popularity rating(passing in a name) '''
+    id = get_person_id(person)
     result = query_details('person', id)
     name = result['popularity']
     return name
 
-def get_movies(actor):
-    '''Returns a list of the movie credits of an actor, slice to truncate'''
+def get_movies(person):
+    '''Returns a list of the movie credits of an person, slice to truncate'''
     lst = []
-    actor_id = get_actor_id(actor)
-    movies = query_get('person', actor_id, 'movie_credits')
+    person_id = get_person_id(person)
+    movies = query_get('person', person_id, 'movie_credits')
     for i in range(len(movies['cast'])):
         lst.append(movies['cast'][i]['title'])
     return lst
@@ -82,7 +83,7 @@ def get_movie_credits(movie):
     return cast_list
 
 def get_cast(movie):
-    '''Returns a list of billed actors, slice to truncate'''
+    '''Returns a list of billed persons, slice to truncate'''
     lst = []
     cast = get_movie_credits(movie)
     for person in cast['cast']:
@@ -91,14 +92,22 @@ def get_cast(movie):
 
 # this part of code is mostly just for output use
 
-
-
-while True:
-    person = input("Enter a person's name: ")
-    if len(person) == 0:
-        break
-
-    cur.execute('''INSERT INTO Actors (id, name, rating)
-        VALUES ( ?, ?, ? )''', (get_actor_id(person), get_actor_name(person), get_actor_rating(person)))
-
-    conn.commit()
+choice = input('Pull how many records?')
+cur.execute('''SELECT * FROM person ORDER BY id DESC LIMIT 1''')
+id = cur.fetchone()[0] + 1
+fail_count = 0
+while count < int(choice):
+#some ids are invalid
+    try:
+        data = query_details("person", id)
+    except:
+        fail_count = fail_count + 1
+        id = id + 1
+        continue
+    count = count + 1
+    print(data['name'],":  ID:", id)
+    cur.execute('''INSERT INTO person (id, name, rating)
+        VALUES ( ?, ?, ? )''', (id, data['name'], data['popularity']))
+    id = id + 1
+conn.commit()
+print('Failed requests: ', fail_count)
