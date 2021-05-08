@@ -1,16 +1,19 @@
 import json
 import urllib.request, urllib.parse, urllib.error
-import xml.etree.ElementTree as ET
+#import xml.etree.ElementTree as ET
 import ssl
 import sqlite3
+import time
+import sys
 # Ignore SSL certificate errors
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 #constant data
-conn = sqlite3.connect('bacondb.sqlite')
+conn = sqlite3.connect('bacon_DB.db')
 cur = conn.cursor()
+count = 0
 
 def json_request(address):
     '''Returns a JSON object from the supplied URL'''
@@ -37,7 +40,7 @@ def query_details(type, id):
 
 #actor methods
 def get_actor_id(actor):
-    '''Returns the actor's ID'''
+    '''Returns the actor's ID (passing in a name)'''
     result = search_api('person', actor)
     actor_id = result['results'][0]['id']
     return actor_id
@@ -47,6 +50,13 @@ def get_actor_name(actor):
     id = get_actor_id(actor)
     result = query_details('person', id)
     name = result['name']
+    return name
+
+def get_actor_rating(actor):
+    '''Returns an actors popularity rating(passing in a name) '''
+    id = get_actor_id(actor)
+    result = query_details('person', id)
+    name = result['popularity']
     return name
 
 def get_movies(actor):
@@ -80,8 +90,15 @@ def get_cast(movie):
     return lst
 
 # this part of code is mostly just for output use
+
+
+
 while True:
     person = input("Enter a person's name: ")
     if len(person) == 0:
         break
-    print(get_cast(person)[:10])
+
+    cur.execute('''INSERT INTO Actors (id, name, rating)
+        VALUES ( ?, ?, ? )''', (get_actor_id(person), get_actor_name(person), get_actor_rating(person)))
+
+    conn.commit()
