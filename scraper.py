@@ -90,24 +90,46 @@ def get_cast(movie):
         lst.append(person['name'])
     return lst
 
-# this part of code is mostly just for output use
+req_type = input('What type of request?(movie, person)')
+amount = input('Pull how many records?')
 
-choice = input('Pull how many records?')
-cur.execute('''SELECT * FROM person ORDER BY id DESC LIMIT 1''')
-id = cur.fetchone()[0] + 1
-fail_count = 0
-while count < int(choice):
+if req_type == "person":
+    cur.execute('''SELECT * FROM person ORDER BY id DESC LIMIT 1''')
+    id = cur.fetchone()[0] + 1
+    fail_count = 0
+    while count < int(amount):
 #some ids are invalid
-    try:
-        data = query_details("person", id)
-    except:
-        fail_count = fail_count + 1
+        try:
+            data = query_details("person", id)
+        except:
+            fail_count = fail_count + 1
+            id = id + 1
+            continue
+        count = count + 1
+        print(data['name'],":  ID:", id)
+        cur.execute('''INSERT INTO person (id, name, rating)
+            VALUES ( ?, ?, ? )''', (id, data['name'], data['popularity']))
         id = id + 1
-        continue
-    count = count + 1
-    print(data['name'],":  ID:", id)
-    cur.execute('''INSERT INTO person (id, name, rating)
-        VALUES ( ?, ?, ? )''', (id, data['name'], data['popularity']))
-    id = id + 1
-conn.commit()
-print('Failed requests: ', fail_count)
+    conn.commit()
+    print('Failed requests: ', fail_count)
+
+else:
+    print("movie query under construction")
+    cur.execute('''SELECT * FROM movie ORDER BY id DESC LIMIT 1''')
+    id = cur.fetchone()[0] + 1
+    fail_count = 0
+    while count < int(amount):
+#some ids are invalid
+        try:
+            data = query_details("movie", id)
+        except:
+            fail_count = fail_count + 1
+            id = id + 1
+            continue
+        count = count + 1
+        print(data['title'],":  ID:", id)
+        cur.execute('''INSERT INTO movie (id, title, rating)
+            VALUES ( ?, ?, ? )''', (id, data['title'], data['vote_average']))
+        id = id + 1
+    conn.commit()
+    print('Failed requests: ', fail_count)
