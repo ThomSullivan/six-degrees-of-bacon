@@ -1,5 +1,5 @@
 # six-degrees-of-bacon
-Keven bacon suite
+Kevin bacon suite
 
 Ask for a name to link to Kevin Bacon(KB)
 search cache database for a route to KB
