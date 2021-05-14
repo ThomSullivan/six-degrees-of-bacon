@@ -114,7 +114,6 @@ if req_type == "person":
     print('Failed requests: ', fail_count)
 
 else:
-    print("movie query under construction")
     cur.execute('''SELECT * FROM movie ORDER BY id DESC LIMIT 1''')
     id = cur.fetchone()[0] + 1
     fail_count = 0
