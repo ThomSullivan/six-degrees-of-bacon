@@ -90,10 +90,11 @@ def get_cast(movie):
         lst.append(person['name'])
     return lst
 
-req_type = input('What type of request?(movie, person)')
-amount = input('Pull how many records?')
+req_type = input('What type of request?(person, movie, cast)')
+req_type = req_type.lower()
 
 if req_type == "person":
+    amount = input('person request: Pull how many records?')
     cur.execute('''SELECT * FROM person ORDER BY id DESC LIMIT 1''')
     id = cur.fetchone()[0] + 1
     fail_count = 0
@@ -113,7 +114,8 @@ if req_type == "person":
     conn.commit()
     print('Failed requests: ', fail_count)
 
-else:
+elif req_type == "movie":
+    amount = input('movie request: Pull how many records?')
     cur.execute('''SELECT * FROM movie ORDER BY id DESC LIMIT 1''')
     id = cur.fetchone()[0] + 1
     fail_count = 0
@@ -132,3 +134,36 @@ else:
         id = id + 1
     conn.commit()
     print('Failed requests: ', fail_count)
+
+elif req_type == 'cast':
+    print('****WARNING each cast request adds many records to local DB*****')
+    amount = input('cast request: Pull how many records?')
+    cur.execute('''SELECT * FROM credits ORDER BY movie_id DESC LIMIT 1''')
+    id = cur.fetchone()[1]
+    print(id)
+    fail_count = 0
+
+    while count < int(amount):
+        id = id + 1
+#some ids are invalid
+        try:
+            data = query_get('movie', id, 'credits')
+        except:
+            fail_count = fail_count + 1
+            continue
+        count = count + 1
+
+        for entry in data['cast']:
+            print('movie ID:', data['id'], ' person name: ', entry['name'], ' Character: ', entry['character'])
+            cur.execute('''INSERT INTO credits (movie_id, person_id, appearing_as)
+                VALUES ( ?, ?, ? )''', (data['id'], entry['id'], entry['character']))
+        for entry in data['crew']:
+            #print('movie ID:', data['id'], ' person name: ', entry['name'], ' job: ', entry['job'])
+            cur.execute('''INSERT INTO credits (movie_id, person_id, appearing_as)
+                VALUES ( ?, ?, ? )''', (data['id'], entry['id'], entry['job']))
+
+    conn.commit()
+    print('Failed requests: ', fail_count)
+
+else:
+    print('error')
