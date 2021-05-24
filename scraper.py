@@ -158,7 +158,6 @@ elif req_type == 'cast':
             cur.execute('''INSERT INTO credits (movie_id, person_id, appearing_as)
                 VALUES ( ?, ?, ? )''', (data['id'], entry['id'], entry['character']))
         for entry in data['crew']:
-            #print('movie ID:', data['id'], ' person name: ', entry['name'], ' job: ', entry['job'])
             cur.execute('''INSERT INTO credits (movie_id, person_id, appearing_as)
                 VALUES ( ?, ?, ? )''', (data['id'], entry['id'], entry['job']))
 
