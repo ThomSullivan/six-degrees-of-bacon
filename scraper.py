@@ -161,7 +161,7 @@ elif req_type == 'cast':
             cur.execute('''INSERT INTO credits (movie_id, person_id, appearing_as)
                 VALUES ( ?, ?, ? )''', (data['id'], entry['id'], entry['job']))
 
-    conn.commit()
+        conn.commit()
     print('Failed requests: ', fail_count)
 
 else:
