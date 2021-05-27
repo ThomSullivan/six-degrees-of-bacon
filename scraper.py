@@ -106,6 +106,8 @@ if req_type == "person":
             fail_count = fail_count + 1
             id = id + 1
             continue
+        if count % 100 == 0:
+            conn.commit()
         count = count + 1
         print(data['name'],":  ID:", id)
         cur.execute('''INSERT INTO person (id, name, rating)
@@ -127,6 +129,8 @@ elif req_type == "movie":
             fail_count = fail_count + 1
             id = id + 1
             continue
+        if count % 100 == 0:
+            conn.commit()
         count = count + 1
         print(data['title'],":  ID:", id)
         cur.execute('''INSERT INTO movie (id, title, rating)
