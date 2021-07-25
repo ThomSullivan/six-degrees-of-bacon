@@ -1,0 +1,48 @@
+CREATE TABLE "routes" (
+	"ID"	INTEGER NOT NULL,
+	"movie1"	INTEGER,
+	"person1"	INTEGER,
+	"movie2"	INTEGER,
+	"person2"	INTEGER,
+	"movie3"	INTEGER,
+	"person3"	INTEGER,
+	"movie4"	INTEGER,
+	"person4"	INTEGER,
+	"movie5"	INTEGER,
+	"person5"	INTEGER,
+	"movie6"	INTEGER,
+	"person6"	INTEGER,
+	"movie7"	INTEGER,
+	"person7"	INTEGER,
+	"movie8"	INTEGER,
+	"person8"	INTEGER,
+	"movie9"	INTEGER,
+	"person9"	INTEGER,
+	"movie10"	INTEGER,
+	"person10"	INTEGER,
+	PRIMARY KEY("ID")
+);
+
+
+SELECT DISTINCT movie_id
+FROM credits
+WHERE person_id = ?;
+
+CREATE TABLE "third_degree" (
+	"ID"	INTEGER UNIQUE,
+	"previous"	INTEGER,
+	"movie"	INTEGER,
+	PRIMARY KEY("ID")
+);
+
+
+SELECT ID, count(*)
+FROM second_degree
+GROUP BY ID
+HAVING count(*) > 1;
+
+DELETE FROM second_degree
+WHERE EXISTS (
+  SELECT 1 FROM second_degree c
+  WHERE c.ID = second_degree.ID AND c.ID < second_degree.ID
+);

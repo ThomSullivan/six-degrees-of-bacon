@@ -15,6 +15,7 @@ conn = sqlite3.connect('bacon_DB.db')
 cur = conn.cursor()
 count = 0
 id = 1
+api_key = 'f9abc524c812cc4b2476a9cda95bddf7'
 
 def json_request(address):
     '''Returns a JSON object from the supplied URL'''
@@ -25,17 +26,17 @@ def json_request(address):
 
 def search_api(type, search):
     search = urllib.parse.quote_plus(search)
-    address = 'https://api.themoviedb.org/3/search/{}?api_key=f9abc524c812cc4b2476a9cda95bddf7&query={}'.format(type, search)
+    address = 'https://api.themoviedb.org/3/search/{}?api_key={}&query={}'.format(type, api_key, search)
     #print(address)
     return json_request(address)
 
 def query_get(type, id, get_type):
-    address = 'https://api.themoviedb.org/3/{}/{}/{}?api_key=f9abc524c812cc4b2476a9cda95bddf7'.format(type, id, get_type)
+    address = 'https://api.themoviedb.org/3/{}/{}/{}?api_key={}'.format(type, id, get_type, api_key)
     #print(address)
     return json_request(address)
 
 def query_details(type, id):
-    address = 'https://api.themoviedb.org/3/{}/{}?api_key=f9abc524c812cc4b2476a9cda95bddf7'.format(type, id)
+    address = 'https://api.themoviedb.org/3/{}/{}?api_key={}'.format(type, id, api_key)
     #print(address)
     return json_request(address)
 
@@ -106,8 +107,8 @@ if req_type == "person":
             fail_count = fail_count + 1
             id = id + 1
             continue
-        if count % 100 == 0:
-            conn.commit()
+
+        conn.commit()
         count = count + 1
         print(data['name'],":  ID:", id)
         cur.execute('''INSERT INTO person (id, name, rating)
@@ -129,8 +130,8 @@ elif req_type == "movie":
             fail_count = fail_count + 1
             id = id + 1
             continue
-        if count % 100 == 0:
-            conn.commit()
+
+        conn.commit()
         count = count + 1
         print(data['title'],":  ID:", id)
         cur.execute('''INSERT INTO movie (id, title, rating)

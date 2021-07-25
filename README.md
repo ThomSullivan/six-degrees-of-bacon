@@ -9,3 +9,6 @@ if not found
 back propagate through data base looking for new/better routes
 update route table with any new routes found
   remove any obsolete routes
+
+
+https://en.wikipedia.org/wiki/Small-world_network

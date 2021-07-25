@@ -1,60 +1,41 @@
-## code pulled to create seperate file that can look through local cache
-    #and call the scraper if needed
+import concurrent.futures
+import sqlite3
+conn = sqlite3.connect('bacon_DB.db')
+cur = conn.cursor()
+conn1 = sqlite3.connect('routes.db')
+cur1 = conn1.cursor()
 
+def list_movies(person):
+    '''Returns a list of movie IDs for the person ID passed in'''
+    cur.execute('''SELECT DISTINCT movie_id
+                    FROM credits
+                    WHERE person_id = ?;''', (person,))
+    movies = [item[0] for item in cur.fetchall()]
+    return movies
 
+def list_cast(movie):
+    cur.execute('''SELECT * FROM credits WHERE movie_id = ?''', (movie,))
+    current_movie = cur.fetchall()
+    return current_movie
+#credit[2] is the person_id in the database
+#credit[1] is the movie ID in the database
 
-def detect_bacon(lst):
-    '''Returns a list of intersections of list with bacon_list'''
-    lst3 = [value for value in lst if value in bacon_list]
-    if len(lst3) > 0:
-        return (True, lst3)
-    else:
-        return False
-
-
-#constant data
-# a list of movies Kevin Bacon is in to start comparisons
-bacon_list = ['Apollo 13', 'Footloose']#fill this list!
-
-
-
-
-degree_zero = get_movies(person)
-print(degree_zero)
-if detect_bacon(degree_zero) == True:
-    print('Found some bacon!')
-    break
-#print(check)
-#If nothing found compile list of top ten actors from top ten movies
-degree_one_actors = []
-for movie in degree_zero:
-    next_list = get_cast(movie)
-    for name in next_list:
-        if name == db_name:
+def process_first_degree(movie):
+    current_cast = list_cast(movie)
+    for credit in current_cast:
+        if credit[2] == BaconID:
+            #print('Already Exists')
             continue
-        elif name not in degree_one_actors:
-            degree_one_actors.append(name)
-#print(degree_one_actors)
-degree_one_movies = []
+        else:
+            #print(credit[3])
+            cur1.execute('''INSERT OR IGNORE INTO first_degree (ID, movie)
+            VALUES ( ?, ?)''', (credit[2], movie,))
+    conn1.commit()
 
-for person in degree_one_actors:
-    try:
-        for movie in get_movies(person):
-            if movie in degree_one_movies:
-                continue
-            elif movie in degree_zero:
-                continue
-            else:
-                degree_one_movies.append(movie)
-    except:
-        continue
-
-
-# now detect_bacon on top ten movies of each person on degree_one
-# keep a list, maybe a dictionary would work to store the degree lists
-# {one_movies: [], one_actors:[], two_movies[], two_actors[], ....}
-#    degree_one_actors = []
-#    for actor in degree_one:
-    #    actor = actor.replace(' ', '+')
-
-#        print(top_ten_movies(actor))
+BaconID = 4724
+if __name__ == '__main__':
+    print('hello')
+    movies = list_movies(BaconID)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        executor.map(process_first_degree, movies)
+    print('good')
