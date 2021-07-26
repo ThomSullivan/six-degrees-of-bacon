@@ -15,7 +15,7 @@ conn = sqlite3.connect('bacon_DB.db')
 cur = conn.cursor()
 count = 0
 id = 1
-api_key = ''
+api_key = '<put TMdb API key here>'
 
 def json_request(address):
     '''Returns a JSON object from the supplied URL'''
