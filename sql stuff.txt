@@ -28,13 +28,13 @@ SELECT DISTINCT movie_id
 FROM credits
 WHERE person_id = ?;
 
-CREATE TABLE "third_degree" (
+CREATE TABLE "fourth_degree" (
 	"ID"	INTEGER UNIQUE,
 	"previous"	INTEGER,
 	"movie"	INTEGER,
-	PRIMARY KEY("ID")
+	PRIMARY KEY("ID"),
+	FOREIGN KEY("previous") REFERENCES "third_degree"("ID")
 );
-
 
 SELECT ID, count(*)
 FROM second_degree
