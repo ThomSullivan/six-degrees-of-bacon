@@ -48,25 +48,18 @@ counter = 1
 #get the list of tuples for use
 cur1.execute('''SELECT * FROM third_degree''')
 previous_degree = cur1.fetchall()
+tables = ['first_degree','second_degree','third_degree','fourth_degree']
+existing_routes = []
+existing_movies = []
+for table in tables:
+    #create a list of movies,and people in the DB for checks
+    cur1.execute('''SELECT ID FROM '''+table)
+    existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
+    cur1.execute('''SELECT movie FROM '''+table)
+    existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
+
 #get the list of existing routes for checks
-cur1.execute('''SELECT ID FROM first_degree''')
-existing_routes = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM second_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM third_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM fourth_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
 existing_routes.append(BaconID)
-#create a list of movies in the DB for checks
-cur1.execute('''SELECT movie FROM first_degree''')
-existing_movies = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM second_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM third_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM fourth_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
 #print(len(existing_movies))
 #process_second_degree(first_degree[1]) #<-- debugger
 total = len(previous_degree)

@@ -36,6 +36,16 @@ CREATE TABLE "fourth_degree" (
 	FOREIGN KEY("previous") REFERENCES "third_degree"("ID")
 );
 
+SELECT *
+FROM third_degree
+JOIN first_degree, second_degree ON first_degree.ID=second_degree.previous AND second_degree.ID=third_degree.previous
+WHERE third_degree.ID=69;
+
+SELECT *
+FROM third_degree
+JOIN first_degree, second_degree, third_degree ON first_degree.ID=second_degree.previous AND second_degree.ID=third_degree.previous
+WHERE third_degree.ID = ?;
+
 SELECT ID, count(*)
 FROM second_degree
 GROUP BY ID
@@ -45,4 +55,11 @@ DELETE FROM second_degree
 WHERE EXISTS (
   SELECT 1 FROM second_degree c
   WHERE c.ID = second_degree.ID AND c.ID < second_degree.ID
+);
+
+CREATE TABLE IF NOT EXISTS "credits" (
+	"ID"	INTEGER NOT NULL UNIQUE,
+	"movie_id"	INTEGER NOT NULL,
+	"person_id"	INTEGER NOT NULL,
+	PRIMARY KEY("ID" AUTOINCREMENT)
 );
