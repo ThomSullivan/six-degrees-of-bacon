@@ -1,8 +1,8 @@
 import concurrent.futures
 import sqlite3
-conn = sqlite3.connect('bacon_DB.db')
+conn = sqlite3.connect('../data/bacon_DB.db')
 cur = conn.cursor()
-conn1 = sqlite3.connect('routes.db')
+conn1 = sqlite3.connect('../data/routes.db')
 cur1 = conn1.cursor()
 
 def list_movies(person):
@@ -41,27 +41,40 @@ def process_second_degree(info):
 
 BaconID = 4724
 #get the list of tuples for use
-cur1.execute('''SELECT * FROM first_degree''')
-previous_degree = cur1.fetchall()
-#get the list of existing routes for checks
 cur1.execute('''SELECT ID FROM first_degree''')
-existing_routes = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM second_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
+previous_degree = unpackIDS(cur1.fetchall())
+BaconID = 4724
+counter = 1
+cur1.execute('''CREATE TABLE IF NOT EXISTS "second_degree" (
+	"ID"	INTEGER UNIQUE,
+	"previous"	INTEGER,
+	"movie"	INTEGER,
+	PRIMARY KEY("ID"),
+	FOREIGN KEY("previous") REFERENCES "first_degree"("ID")
+);''')
+#get the list of tuples for use
+tables = ['first_degree','second_degree']
+existing_routes = []
+existing_movies = []
+for table in tables:
+    #create a list of movies,and people in the DB for checks
+    cur1.execute('''SELECT ID FROM '''+table)
+    existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
+    cur1.execute('''SELECT DISTINCT movie FROM '''+table)
+    existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
+
+#get the list of existing routes for checks
 existing_routes.append(BaconID)
-#create a list of movies in the DB for checks
-cur1.execute('''SELECT movie FROM first_degree''')
-existing_movies = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM second_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
+#print(len(existing_movies))
 #process_second_degree(first_degree[1]) #<-- debugger
+total = len(previous_degree)
+counter = 1
 if __name__ == '__main__':
     print('hello')
     with concurrent.futures.ProcessPoolExecutor() as executor:
         for person in previous_degree:
-
-            person = person[0]
+            print(counter/total)
+            counter += 1
             movies = list_movies(person)
             tup = [(movie, person) for movie in movies if movie not in existing_movies]
-            #process_second_degree(tup[0])
             executor.map(process_second_degree, tup)

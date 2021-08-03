@@ -28,12 +28,12 @@ SELECT DISTINCT movie_id
 FROM credits
 WHERE person_id = ?;
 
-CREATE TABLE "fourth_degree" (
+CREATE TABLE IF NOT EXISTS "third_degree" (
 	"ID"	INTEGER UNIQUE,
 	"previous"	INTEGER,
 	"movie"	INTEGER,
 	PRIMARY KEY("ID"),
-	FOREIGN KEY("previous") REFERENCES "third_degree"("ID")
+	FOREIGN KEY("previous") REFERENCES "second_degree"("ID")
 );
 
 SELECT *
@@ -48,8 +48,12 @@ WHERE third_degree.ID = ?;
 
 SELECT ID, count(*)
 FROM second_degree
-GROUP BY ID
-HAVING count(*) > 1;
+GROUP BY ID count(*) DESC LIMIT 10;
+
+SELECT previous, COUNT(previous) AS log_count
+FROM second_degree
+GROUP BY previous
+ORDER BY log_count DESC limit 10;
 
 DELETE FROM second_degree
 WHERE EXISTS (

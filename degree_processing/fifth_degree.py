@@ -1,8 +1,8 @@
 import concurrent.futures
 import sqlite3
-conn = sqlite3.connect('bacon_DB.db')
+conn = sqlite3.connect('../data/bacon_DB.db')
 cur = conn.cursor()
-conn1 = sqlite3.connect('routes.db')
+conn1 = sqlite3.connect('../data/routes.db')
 cur1 = conn1.cursor()
 
 def list_movies(person):
@@ -23,8 +23,8 @@ def list_cast(movie):
     current_movie = cur.fetchall()
     return current_movie
 
-def process_third_degree(info):
-    '''Pass in a tuple of info about second degree route(movie,person)'''
+def process_fifth_degree(info):
+    '''Pass in a tuple of info about third degree route(movie,person)'''
     #print(person)
     existing_movies.append(info[0])
     current_cast = list_cast(info[0])
@@ -34,40 +34,47 @@ def process_third_degree(info):
             continue
         else:
             #print(credit[2]) #Debugger
-            cur1.execute('''INSERT OR IGNORE INTO third_degree (ID, previous, movie)
+            cur1.execute('''INSERT OR IGNORE INTO fifth_degree (ID, previous, movie)
             VALUES ( ?, ?, ?)''', (credit[2], info[1], credit[1],))
             existing_routes.append(credit[2])
     conn1.commit()
-
 BaconID = 4724
+counter = 1
+cur1.execute('''CREATE TABLE IF NOT EXISTS "fifth_degree" (
+	"ID"	INTEGER UNIQUE,
+	"previous"	INTEGER,
+	"movie"	INTEGER,
+	PRIMARY KEY("ID"),
+	FOREIGN KEY("previous") REFERENCES "fourth_degree"("ID")
+);''')
 #get the list of tuples for use
-cur1.execute('''SELECT * FROM second_degree''')
-previous_degree = cur1.fetchall()
+cur1.execute('''SELECT * FROM fourth_degree''')
+previous_degree = upackIDs(cur1.fetchall())
+tables = ['first_degree','second_degree','third_degree','fourth_degree','fifth_degree']
+existing_routes = []
+existing_movies = []
+for table in tables:
+    #create a list of movies,and people in the DB for checks
+    cur1.execute('''SELECT ID FROM '''+table)
+    existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
+    cur1.execute('''SELECT DISTINCT movie FROM '''+table)
+    existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
+
 #get the list of existing routes for checks
-cur1.execute('''SELECT ID FROM first_degree''')
-existing_routes = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM second_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT ID FROM third_degree''')
-existing_routes = existing_routes + unpack_IDS(cur1.fetchall())
 existing_routes.append(BaconID)
-#create a list of movies in the DB for checks
-cur1.execute('''SELECT movie FROM first_degree''')
-existing_movies = unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM second_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
-cur1.execute('''SELECT movie FROM third_degree''')
-existing_movies = existing_movies + unpack_IDS(cur1.fetchall())
 #print(len(existing_movies))
 #process_second_degree(first_degree[1]) #<-- debugger
+total = len(previous_degree)
+counter = 1
 if __name__ == '__main__':
     print('hello')
     with concurrent.futures.ProcessPoolExecutor() as executor:
         for person in previous_degree:
-
-            person = person[0]
+            print(counter/total)
+            counter += 1
             movies = list_movies(person)
+            #tuples are the only way I could get these next steps to run concurrently
             tup = [(movie, person) for movie in movies if movie not in existing_movies]
             #print(len(tup))
             #process_third_degree(tup[0])
-            executor.map(process_third_degree, tup)
+            executor.map(process_fifth_degree, tup)

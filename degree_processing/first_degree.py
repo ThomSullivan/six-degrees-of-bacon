@@ -1,8 +1,8 @@
 import concurrent.futures
 import sqlite3
-conn = sqlite3.connect('bacon_DB.db')
+conn = sqlite3.connect('../data/bacon_DB.db')
 cur = conn.cursor()
-conn1 = sqlite3.connect('routes.db')
+conn1 = sqlite3.connect('../data/routes.db')
 cur1 = conn1.cursor()
 
 def list_movies(person):
@@ -32,8 +32,14 @@ def process_first_degree(movie):
             VALUES ( ?, ?)''', (credit[2], movie,))
     conn1.commit()
 
-BaconID = 4724
+
 if __name__ == '__main__':
+    BaconID = 4724
+    con1.execute('''CREATE TABLE IF NOT EXISTS "first_degree" (
+    	"ID"	INTEGER UNIQUE,
+    	"movie"	INTEGER,
+    	PRIMARY KEY("ID")
+    );''')
     print('hello')
     movies = list_movies(BaconID)
     with concurrent.futures.ProcessPoolExecutor() as executor:
