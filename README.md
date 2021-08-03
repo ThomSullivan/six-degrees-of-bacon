@@ -1,4 +1,4 @@
-Small World Network mapping:
+#Small World Network mapping:
 While I found this after conception of the idea, [The Oracle of Bacon](https://oracleofbacon.org/), has something very similar to what is available here. The biggest difference that exsists is this project moved more toward finding a connection for everyone to Kevin Bacon, where as [The Oracle of Bacon](https://oracleofbacon.org/) seems to find the route and then store it for later use. From a logical standpoint this mapping tool will move the opposite direction and record all routes starting with people in a Kevin Bacon movie.
 
 The source of all data used for this project:
