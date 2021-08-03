@@ -49,7 +49,7 @@ cur1.execute('''CREATE TABLE IF NOT EXISTS "sixth_degree" (
 );''')
 #get the list of tuples for use
 cur1.execute('''SELECT ID FROM fifth_degree''')
-previous_degree = upackIDs(cur1.fetchall())
+previous_degree = unpack_IDS(cur1.fetchall())
 tables = ['first_degree','second_degree','third_degree','fourth_degree','fifth_degree','sixth_degree']
 existing_routes = []
 existing_movies = []

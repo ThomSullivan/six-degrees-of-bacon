@@ -42,7 +42,7 @@ def process_second_degree(info):
 BaconID = 4724
 #get the list of tuples for use
 cur1.execute('''SELECT ID FROM first_degree''')
-previous_degree = unpackIDS(cur1.fetchall())
+previous_degree = unpack_IDS(cur1.fetchall())
 BaconID = 4724
 counter = 1
 cur1.execute('''CREATE TABLE IF NOT EXISTS "second_degree" (
