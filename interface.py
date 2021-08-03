@@ -9,7 +9,7 @@ import sys
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
-conn1 = sqlite3.connect('routes.db')
+conn1 = sqlite3.connect('../data/routes.db')
 cur1 = conn1.cursor()
 
 api_key = ''#'<put TMdb API key here>'
@@ -26,13 +26,13 @@ def json_request(address):
     return js
 
 def query_details(type, id):
-    address = 'https://api.themoviedb.org/3/{}/{}?api_key={}'.format(type, id, api_key)
+    address = 'https://api.themoviedb.org/3/{}/{}?api_key={}&include_adult=true'.format(type, id, api_key)
     #print(address)
     return json_request(address)
 
 def search_api(type, search):
     search = urllib.parse.quote_plus(search)
-    address = 'https://api.themoviedb.org/3/search/{}?api_key={}&query={}'.format(type, api_key, search)
+    address = 'https://api.themoviedb.org/3/search/{}?api_key={}&query={}&include_adult=true'.format(type, api_key, search)
     #print(address)
     return json_request(address)
 
@@ -83,7 +83,7 @@ def construct_statement(list):
 
     return statement
 #print(target)
-tables = ['first_degree','second_degree','third_degree']
+tables = ['first_degree','second_degree','third_degree','fourth_degree']
 degrees = {}
 #create an index to locate target in database
 for table in tables:
@@ -122,33 +122,31 @@ while True:
     #this has to be done due to data structures within the data base ID is route[1] for first_degree
     # but route[2] is used for the rest
     if len(this_list) == 1:
-        output = target_name+' was in '+ get_movie_title(route[1]) + ' \nwith Kevin Bacon'
+        output = target_name+' was in '+ get_movie_title(route[1]) + ' with Kevin Bacon'
         print(output)
     elif len(this_list) == 2:
-        output = target_name + ' was in ' + get_movie_title(route[2])  +'\nwith ' + get_person_name(route[3]) +' who was in ' + get_movie_title(route[4]) + ' \nwith Kevin Bacon'
+        output = target_name + ' was in ' + get_movie_title(route[2])  +' with\n' + get_person_name(route[3]) +' who was in ' + get_movie_title(route[4]) + ' \nwith Kevin Bacon'
         print(output)
     else:
-        first_part = target_name + ' was in ' + get_movie_title(route[2])  +'\nwith '
-        final_part = ' who was in ' + get_movie_title(route[4]) + ' \nwith '
+        first_part = target_name + ' was in ' + get_movie_title(route[2])  +' with\n'
+        final_part = ' who was in ' + get_movie_title(route[4]) + ' with\n'
         middle_part = ''
         tuple_couter = 0
-        if len(route[5:]) > 1:
-            string = ''
-            string1 = ''
-            string2 = ''
-            for item in route[5:]:
-                if tuple_couter == 0:
-                    string = get_person_name(item) + ' who was in '
-                    tuple_couter += 1
-                elif tuple_couter == 1:
-                    string1 = get_person_name(item) + ' who was in '
-                    tuple_couter +=1
-                else:
-                    middle_part = middle_part + string + get_movie_title(item) + '\nwith ' + string1
-                    string = ''
-                    string1 = ''
-                    tuple_couter = 0
-        output = first_part + middle_part + final_part + ' Kevin Bacon!'
+        string = ''
+        string1 = ''
+        for item in route[5:]:
+            if tuple_couter == 0:
+                string = get_person_name(item) + ' who was in '
+                tuple_couter += 1
+            elif tuple_couter == 1:
+                string1 = get_person_name(item) + ' who was in '
+                tuple_couter +=1
+            else:
+                middle_part = middle_part + string + get_movie_title(item) + ' with\n' + string1
+                string = ''
+                string1 = ''
+                tuple_couter = 0
+        output = first_part + middle_part + final_part + 'Kevin Bacon!'
         print(output)
 #pull route data w/ FKs
 #use route data to make API requests
