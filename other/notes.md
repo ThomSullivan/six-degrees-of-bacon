@@ -24,13 +24,13 @@ The source of all data used for this project:
 
 Finding the [The Oracle of Bacon](https://oracleofbacon.org/) made me a little sad as I started work on this in a vacuum.
 Articles:
-[title](https://www.cnn.com/2014/03/08/tech/web/kevin-bacon-six-degrees-sxsw/)
-[title](http://www.randalolson.com/2015/03/04/revisiting-the-six-degrees-of-kevin-bacon/)
-[title](https://en.wikipedia.org/wiki/Small-world_network)
+https://www.cnn.com/2014/03/08/tech/web/kevin-bacon-six-degrees-sxsw/
+http://www.randalolson.com/2015/03/04/revisiting-the-six-degrees-of-kevin-bacon/
+https://en.wikipedia.org/wiki/Small-world_network
 Videos:
-[title](https://www.youtube.com/watch?v=Rmn-amJ9UA4)
-[title](https://www.youtube.com/watch?v=n9u-TITxwoM&t=3s)
-[title](https://www.youtube.com/watch?v=TcxZSmzPw8k&t=310s)
+https://www.youtube.com/watch?v=Rmn-amJ9UA4
+https://www.youtube.com/watch?v=n9u-TITxwoM&t=3s
+https://www.youtube.com/watch?v=TcxZSmzPw8k&t=310s
 ------------------------------
 Ask for a name to link to Kevin Bacon(KB)
 search cache database for a route to KB
