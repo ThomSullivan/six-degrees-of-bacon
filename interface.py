@@ -12,7 +12,7 @@ ctx.verify_mode = ssl.CERT_NONE
 conn1 = sqlite3.connect('../data/routes.db')
 cur1 = conn1.cursor()
 
-api_key = ''#'<put TMdb API key here>'
+api_key = '4b266bad05af1b268bc8c83e7bb8f77a'#'<put TMdb API key here>'
 
 def unpack_IDS(list):
     new_list = [x[0] for x in list]
@@ -83,7 +83,7 @@ def construct_statement(list):
 
     return statement
 #print(target)
-tables = ['first_degree','second_degree','third_degree','fourth_degree']
+tables = ['first_degree','second_degree','third_degree','fourth_degree','fifth_degree']
 degrees = {}
 #create an index to locate target in database
 for table in tables:
